@@ -371,4 +371,36 @@ void main() {
     expect(RefreshConfiguration.of(context2)!.enableScrollWhenTwoLevel, true);
     expect(RefreshConfiguration.of(context2)!.enableBallisticRefresh, false);
   });
+
+  testWidgets("inherit scrollCacheExtent from child ScrollView",
+      (tester) async {
+    final RefreshController _refreshController = RefreshController();
+    Future<ScrollCacheExtent?> scrollCacheExtentOf(
+        {double? cacheExtent, required ScrollCacheExtent child}) async {
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: SmartRefresher(
+          header: TestHeader(),
+          cacheExtent: cacheExtent,
+          child: ListView(
+            scrollCacheExtent: child,
+            children: <Widget>[Container(height: 100.0)],
+          ),
+          controller: _refreshController,
+        ),
+      ));
+      return tester.widget<Viewport>(find.byType(Viewport)).scrollCacheExtent;
+    }
+
+    expect(
+        await scrollCacheExtentOf(child: const ScrollCacheExtent.pixels(1000)),
+        const ScrollCacheExtent.pixels(1000));
+    expect(
+        await scrollCacheExtentOf(child: const ScrollCacheExtent.viewport(4)),
+        const ScrollCacheExtent.viewport(4));
+    expect(
+        await scrollCacheExtentOf(
+            cacheExtent: 500, child: const ScrollCacheExtent.viewport(4)),
+        const ScrollCacheExtent.pixels(500));
+  });
 }

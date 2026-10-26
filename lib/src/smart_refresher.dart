@@ -6,6 +6,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -374,6 +375,7 @@ class SmartRefresherState extends State<SmartRefresher> {
       bool? primary = widget.primary;
       Key? key;
       double? cacheExtent = widget.cacheExtent;
+      ScrollCacheExtent? scrollCacheExtent;
 
       Axis? scrollDirection = widget.scrollDirection;
       int? semanticChildCount = widget.semanticChildCount;
@@ -390,6 +392,8 @@ class SmartRefresherState extends State<SmartRefresher> {
       if (childView is ScrollView) {
         primary = primary ?? childView.primary;
         cacheExtent = cacheExtent ?? childView.cacheExtent;
+        scrollCacheExtent =
+            widget.cacheExtent == null ? childView.scrollCacheExtent : null;
         key = key ?? childView.key;
         semanticChildCount = semanticChildCount ?? childView.semanticChildCount;
         reverse = reverse ?? childView.reverse;
@@ -408,6 +412,7 @@ class SmartRefresherState extends State<SmartRefresher> {
         // ignore: DEPRECATED_MEMBER_USE_FROM_SAME_PACKAGE
         controller: scrollController,
         cacheExtent: cacheExtent,
+        scrollCacheExtent: scrollCacheExtent,
         key: key,
         scrollDirection: scrollDirection ?? Axis.vertical,
         semanticChildCount: semanticChildCount,
